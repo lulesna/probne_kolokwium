@@ -1,0 +1,41 @@
+services:
+
+  app:
+    # aplikacja budowana z lokalnego pliku obrazu
+    build: .
+    # aplikacja dostępna z hosta po standardowym porcie HTTP aplikacji
+    ports:
+      - "3000:3000"
+    # hasło i domyślną bazę zgodne z tym, czego oczekuje aplikacja (do sprawdzenia w README.md
+    environment:
+      # komunikacja aplikacja ↔ baza po nazwie serwisu
+      PORT: 3000
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: items
+    # aplikacja nie startuje, dopóki baza nie jest gotowa do obsługi połączeń – wymagany aktywny mechanizm
+    # sprawdzania gotowości bazy oraz zależność aplikacji od tego stanu
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    # baza pobierana z oficjalnego rejestru w wersji 16, w wariancie minimalnym
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: items
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d items"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+# dane bazy przeżywają zatrzymanie i ponowne uruchomienie kontenerów
+volumes:
+  pg-data:

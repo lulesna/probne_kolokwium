@@ -1,0 +1,71 @@
+name: CI Pipeline
+
+# uruchamia się automatycznie przy aktualizacji gałęzi głównej oraz przy otwarciu/aktualizacji pull requestu do tej gałęzi
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# trzy zadania: kolejno lint, testy, build
+jobs:
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      # każde zadanie pobiera kod repozytorium
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
+
+      # każde zadanie pracuje na środowisku z Node.js w wersji 20
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # instaluje zależności przed uruchomieniem właściwego skryptu
+      - name: Instalacja zaleznosci
+        run: npm ci
+
+      - name: Uruchomienie lintera
+        run: npm run lint
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    # zadania wykonują się sekwencyjnie – każde kolejne dopiero po sukcesie poprzedniego (DAG, nie równolegle)
+    needs: lint
+    steps:
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalacja zaleznosci
+        run: npm ci
+
+      - name: Uruchomienie testow
+        run: npm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repozytorium
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalacja zaleznosci
+        run: npm ci
+
+      - name: Budowanie projektu
+        run: npm run build
