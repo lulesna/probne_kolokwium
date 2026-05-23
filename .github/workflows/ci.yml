@@ -23,6 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       # instaluje zależności przed uruchomieniem właściwego skryptu
       - name: Instalacja zaleznosci
@@ -44,6 +45,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Instalacja zaleznosci
         run: npm ci
@@ -63,6 +65,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Instalacja zaleznosci
         run: npm ci
