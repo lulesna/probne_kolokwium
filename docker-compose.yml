@@ -19,7 +19,8 @@ services:
     # sprawdzania gotowości bazy oraz zależność aplikacji od tego stanu
     depends_on:
       db:
-        condition: service_healthy
+        condition: service_started  # service_started
+
 
   db:
     # baza pobierana z oficjalnego rejestru w wersji 16, w wariancie minimalnym

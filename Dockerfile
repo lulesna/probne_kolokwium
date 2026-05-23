@@ -1,5 +1,5 @@
 # korzysta z minimalnego, oficjalnego obrazu bazowego z Node.js w wersji 20
-FROM node:20
+FROM node:20-alpine
 
 WORKDIR /app
 
